@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import Login from './src/screens/Login';
 
+import Feather from '@expo/vector-icons/Feather'
+
 export default function App() {
 
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(1)
 
   if(!user){
     return (
@@ -15,7 +17,11 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>App Tarefas</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Olá, Alves</Text>
+      </View>
+
+
       <StatusBar style="auto" />
     </SafeAreaView>
   );
@@ -25,7 +31,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#ffffff'
+  },
+  header: {
+    backgroundColor: '#fc210d',
+    paddingTop: 75,
+    padding: 15,
+    elevation: 15,
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 15,
+  }
 });
