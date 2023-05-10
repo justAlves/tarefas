@@ -1,18 +1,46 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Keyboard } from 'react-native'
+import React, { useState } from 'react' 
+
+import ToastManager, {Toast} from 'toastify-react-native'
 
 import background from '../../../assets/Background.png'
 import background2 from '../../../assets/Background2.png'
 
-export default function Login() {
+import firebase from '../../services/firebaseConnection'
+
+export default function Login({changeStatus}) {
 
     const [newUser, setNewUser] = useState(false)
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    function handleLogin(){
+        if(newUser){
+            const user = firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((user) => {
+                Keyboard.dismiss()
+                Toast.success('Registered user! :)', 'bottom')
+            })
+            .catch(err => {
+                Keyboard.dismiss()
+                Toast.error('Something wrong! :(', 'bottom')
+            })
+            return
+        }else{
+            const user = firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(user => changeStatus(user.user.uid))
+            .catch(err => {
+                Keyboard.dismiss()
+                Toast.error('Ops! Something wrong! :(', 'bottom')
+            })
+            return
+        }
+    }
+
   return (
       <View style={styles.container}>
+        <ToastManager position='bottom'/>
         <ImageBackground source={newUser ? background : background2} resizeMode='cover' style={{flex: 1, justifyContent: 'center'}}>     
         <View style={{padding: 25}}>
             <Text style={styles.title}>{newUser ? 'Create Account' : 'Sign In!'}</Text>
@@ -45,7 +73,7 @@ export default function Login() {
                     />
                     )
                 }
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
                     <Text style={styles.btnText}>
                         {newUser ? 'Sign up' : 'Log in'}
                     </Text>

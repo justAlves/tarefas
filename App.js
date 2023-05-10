@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import Login from './src/screens/Login';
 
 export default function App() {
@@ -9,15 +9,15 @@ export default function App() {
 
   if(!user){
     return (
-    <Login/>
+    <Login changeStatus={user => setUser(user)}/>
     )
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text>App Tarefas</Text>
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
 }
 
