@@ -1,13 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
 import Login from './src/screens/Login';
+import Task from './src/Components/Task';
 
 import Feather from '@expo/vector-icons/Feather'
+import AddTask from './src/screens/AddTask';
 
 export default function App() {
 
   const [user, setUser] = useState(1)
+
+  const data = [
+    {
+    id: 1,
+    name: 'Comprar coca-cola'
+    },
+    {
+    id: 2,
+    name: 'Estudar React Native'
+    },
+]
 
   if(!user){
     return (
@@ -17,10 +30,24 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Olá, Alves</Text>
-      </View>
+      <Text style={styles.title}>Olá, Alves</Text>
 
+      <FlatList
+        style={styles.list}
+        keyExtractor={item => item.key}
+        data={data}
+        renderItem={({item}) => (
+          <Task key={item.id} data={item}/>
+        )}
+      />
+
+      <View style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+        <TouchableOpacity style={styles.addButton}>
+          <Feather name='plus' size={25} color='#ffffff'/>
+        </TouchableOpacity>
+      </View>
+      
+      <AddTask/>
 
       <StatusBar style="auto" />
     </SafeAreaView>
@@ -30,19 +57,25 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EFFBFF',
+    paddingTop: 75,
+    padding: 15,
   },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#ffffff'
+    color: '#000'
   },
-  header: {
-    backgroundColor: '#fc210d',
-    paddingTop: 75,
-    padding: 15,
-    elevation: 15,
-    borderBottomRightRadius: 15,
-    borderBottomLeftRadius: 15,
+  list:{
+    padding: 10,
+  },
+  addButton: {
+    backgroundColor: '#FF5959',
+    width: 55,
+    height: 55,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10
   }
 });
