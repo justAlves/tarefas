@@ -9,7 +9,8 @@ import AddTask from './src/screens/AddTask';
 
 export default function App() {
 
-  const [user, setUser] = useState(1)
+  const [user, setUser] = useState(null)
+  const [modalVisible, setModalVisible] = useState(false)
 
   const data = [
     {
@@ -21,6 +22,11 @@ export default function App() {
     name: 'Estudar React Native'
     },
 ]
+
+
+  function handleDelete(id){
+    console.log(id)
+  }
 
   if(!user){
     return (
@@ -37,17 +43,17 @@ export default function App() {
         keyExtractor={item => item.key}
         data={data}
         renderItem={({item}) => (
-          <Task key={item.id} data={item}/>
+          <Task key={item.id} data={item} deleteTask={handleDelete}/>
         )}
       />
 
       <View style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
           <Feather name='plus' size={25} color='#ffffff'/>
         </TouchableOpacity>
       </View>
       
-      <AddTask/>
+      <AddTask modalVisible={modalVisible} setModalVisible={setModalVisible}/>
 
       <StatusBar style="auto" />
     </SafeAreaView>

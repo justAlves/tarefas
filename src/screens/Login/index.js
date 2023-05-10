@@ -14,19 +14,25 @@ export default function Login({changeStatus}) {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
     function handleLogin(){
         if(newUser){
-            const user = firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then((user) => {
-                Keyboard.dismiss()
-                Toast.success('Registered user! :)', 'bottom')
-            })
-            .catch(err => {
-                Keyboard.dismiss()
-                Toast.error('Something wrong! :(', 'bottom')
-            })
-            return
+            if(confirmPassword === password){
+                const user = firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((user) => {
+                    Keyboard.dismiss()
+                    Toast.success('Registered user! :)', 'bottom')
+                })
+                .catch(err => {
+                    Keyboard.dismiss()
+                    Toast.error('Something wrong! :(', 'bottom')
+                })
+                return
+            }else{
+                Toast.error('The Passwords doesnt match!', 'bottom')
+                return
+            }
         }else{
             const user = firebase.auth().signInWithEmailAndPassword(email, password)
             .then(user => changeStatus(user.user.uid))
@@ -40,7 +46,7 @@ export default function Login({changeStatus}) {
 
   return (
       <View style={styles.container}>
-        <ToastManager position='bottom'/>
+        <ToastManager position='bottom' animationIn='slideInLeft' animationOut='slideOutRight'/>
         <ImageBackground source={newUser ? background : background2} resizeMode='cover' style={{flex: 1, justifyContent: 'center'}}>     
         <View style={{padding: 25}}>
             <Text style={styles.title}>{newUser ? 'Create Account' : 'Sign In!'}</Text>
@@ -64,8 +70,8 @@ export default function Login({changeStatus}) {
                 {
                     newUser && (
                         <TextInput
-                        value={password}
-                        onChangeText={t => setPassword(t)}
+                        value={confirmPassword}
+                        onChangeText={t => setConfirmPassword(t)}
                         secureTextEntry
                         placeholder='Confirm Password'
                         style={[styles.input, {marginTop: 15}]}
@@ -73,7 +79,7 @@ export default function Login({changeStatus}) {
                     />
                     )
                 }
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <TouchableOpacity disabled={email == '' || password == ''} style={[styles.button, {backgroundColor: email == '' || password == '' ? '#9a9a9a' : '#000'}]} onPress={handleLogin}>
                     <Text style={styles.btnText}>
                         {newUser ? 'Sign up' : 'Log in'}
                     </Text>
