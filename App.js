@@ -22,16 +22,20 @@ export default function App() {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    function loadUser(){
-      const user = AsyncStorage.getItem('user')
-      if(user != null){
-        const jsonUser = JSON.parse(user)
-        setUser(jsonUser)
+    async function loadUser(){
+      try {
+        const user = await AsyncStorage.getItem('user')
+        if(user != null){
+          const jsonUser = JSON.parse(user)
+          setUser(jsonUser)
+        }
+      } catch (error) {
+        console.log(error)
       }
     }
     
     loadUser()
-  }, [user])
+  }, [])
 
   useEffect(() => {
     function getUser(){
@@ -122,6 +126,15 @@ export default function App() {
     )
   }
 
+  async function logout(){
+    try {
+      await AsyncStorage.clear()
+      setUser(null)
+    } catch (error) {
+      
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ToastManager 
@@ -130,11 +143,16 @@ export default function App() {
               animationOut='slideOutRight'
               
       />
-      <Text style={styles.title}>Olá, {user.name}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <Text style={styles.title}>Olá, {user.name}</Text>
+        <TouchableOpacity onPress={logout}>
+          <Feather name="arrow-left-circle" size={30} color="#FF5959" />
+        </TouchableOpacity>
+      </View>
 
       <FlatList
         style={styles.list}
-        keyExtractor={item => item.key}
+        keyExtractor={item => item.id}
         data={data}
         renderItem={({item}) => (
           <Task key={item.id} data={item} editTask={handleEdit} deleteTask={handleDelete}/>

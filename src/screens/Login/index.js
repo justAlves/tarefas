@@ -18,7 +18,7 @@ export default function Login({changeStatus}) {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
 
-    function handleLogin(){
+    async function handleLogin(){
         if(newUser){
             if(confirmPassword === password){
                 const user = firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -41,15 +41,17 @@ export default function Login({changeStatus}) {
         }else{
             const user = firebase.auth().signInWithEmailAndPassword(email, password)
             .then(user => {
-                firebase.database().ref('users').child(user.user.uid).once('value', snapshot => {
-                   changeStatus({
+                firebase.database().ref('users').child(user.user.uid).once('value', async snapshot => {
+                    const data = {
                         id: user.user.uid,
                         name: snapshot.val().name
+                    } 
+                   changeStatus({
+                        ...data
                     })
-                    AsyncStorage.setItem('user', {
-                        id: user.user.id,
-                        name: snapshot.val().name
-                    })
+                    await AsyncStorage.setItem('user', JSON.stringify({
+                        ...data
+                    }))
                 })
                 
             })
