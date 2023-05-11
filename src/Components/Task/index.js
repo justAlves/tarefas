@@ -11,7 +11,7 @@ export default function Task({data, editTask, deleteTask}) {
                 <TouchableOpacity onPress={() => deleteTask(data.id)}>
                     <Feather name='trash-2' size={25} color='#DB2707'/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => editTask(data.id)}>
+                <TouchableOpacity onPress={() => editTask(data)}>
                     <Feather name='edit-2' size={25} color='#F24C05'/>
                 </TouchableOpacity>
             </View>

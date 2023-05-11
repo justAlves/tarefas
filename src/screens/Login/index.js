@@ -13,6 +13,7 @@ export default function Login({changeStatus}) {
     const [newUser, setNewUser] = useState(false)
 
     const [email, setEmail] = useState('')
+    const [name, setName] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
 
@@ -21,6 +22,9 @@ export default function Login({changeStatus}) {
             if(confirmPassword === password){
                 const user = firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then((user) => {
+                    firebase.database().ref('users').child(user.user.uid).set({
+                        name: name
+                    })
                     Keyboard.dismiss()
                     Toast.success('Registered user! :)', 'bottom')
                 })
@@ -35,7 +39,16 @@ export default function Login({changeStatus}) {
             }
         }else{
             const user = firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(user => changeStatus(user.user.uid))
+            .then(user => {
+                const name = firebase.database().ref('users').child(user.user.uid).once('value', snapshot => {
+                   changeStatus({
+                        id: user.user.uid,
+                        name: snapshot.val().name
+                    })
+                    
+                })
+                
+            })
             .catch(err => {
                 Keyboard.dismiss()
                 Toast.error('Ops! Something wrong! :(', 'bottom')
@@ -52,11 +65,20 @@ export default function Login({changeStatus}) {
             <Text style={styles.title}>{newUser ? 'Create Account' : 'Sign In!'}</Text>
             <Text style={styles.subTitle}>{newUser ? '' : 'Enter your Email & Password'}</Text>
             <View style={styles.form}>
+                {newUser && (
+                    <TextInput
+                    value={name}
+                    onChangeText={t => setName(t)}
+                    placeholder='Name'
+                    style={styles.input}
+                    placeholderTextColor={'#000'}
+                />
+                )}
                 <TextInput
                     value={email}
                     onChangeText={t => setEmail(t)}
                     placeholder='E-mail'
-                    style={styles.input}
+                    style={[styles.input, {marginTop: 15}]}
                     placeholderTextColor={'#000'}
                 />
                 <TextInput
