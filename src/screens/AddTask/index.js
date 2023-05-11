@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, Modal, ImageBackground, Image, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 
+import ToastManager, {Toast} from 'toastify-react-native'
 import Feather from '@expo/vector-icons/Feather'
 
 import background from '../../../assets/Background3.png'
 import image from '../../../assets/ImageModal.png'
 
-export default function AddTask({modalVisible, setModalVisible}) {
+export default function AddTask({modalVisible, setModalVisible, handleAdd, newTask, setNewTask, taskId, setTaskId}) {
 
   
 
@@ -17,8 +18,18 @@ export default function AddTask({modalVisible, setModalVisible}) {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(!modalVisible)} 
         >
+            <ToastManager 
+              position='bottom' 
+              animationIn='slideInLeft' 
+              animationOut='slideOutRight'
+              
+            />
             <View style={styles.modal}>
-              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+              <TouchableOpacity onPress={() => {
+                setModalVisible(!modalVisible)
+                setNewTask('')
+                setTaskId('')
+              }}>
                 <Feather name='corner-down-left' size={35}/>
               </TouchableOpacity>
               <View style={styles.header}>
@@ -32,11 +43,14 @@ export default function AddTask({modalVisible, setModalVisible}) {
                 <TextInput
                   style={styles.input}
                   placeholder='Enter the task name...'
+                  value={newTask}
+                  onChangeText={t => setNewTask(t)}
+
                 />
                 <View style={{alignItems: 'center'}}>
-                  <TouchableOpacity style={styles.button}>
+                  <TouchableOpacity style={styles.button} onPress={() => handleAdd()}>
                     <Text style={styles.btnText}>
-                      Add Task
+                      {taskId !== '' ? 'Update Task' : 'Add Task'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -84,7 +98,7 @@ const styles = StyleSheet.create({
   },
   button:{
     backgroundColor: '#F07F7F',
-    width: 120,
+    //width: 120,
     padding: 15,
     alignItems: 'center',
     marginTop: 37,
