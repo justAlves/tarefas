@@ -7,6 +7,7 @@ import background from '../../../assets/Background.png'
 import background2 from '../../../assets/Background2.png'
 
 import firebase from '../../services/firebaseConnection'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Login({changeStatus}) {
 
@@ -40,12 +41,15 @@ export default function Login({changeStatus}) {
         }else{
             const user = firebase.auth().signInWithEmailAndPassword(email, password)
             .then(user => {
-                const name = firebase.database().ref('users').child(user.user.uid).once('value', snapshot => {
+                firebase.database().ref('users').child(user.user.uid).once('value', snapshot => {
                    changeStatus({
                         id: user.user.uid,
                         name: snapshot.val().name
                     })
-                    
+                    AsyncStorage.setItem('user', {
+                        id: user.user.id,
+                        name: snapshot.val().name
+                    })
                 })
                 
             })

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect,} from 'react';
 import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity, Keyboard, TextInput } from 'react-native';
 import ToastManager, {Toast} from 'toastify-react-native'
 import firebase from './src/services/firebaseConnection';
@@ -9,10 +9,9 @@ import Task from './src/Components/Task';
 
 import Feather from '@expo/vector-icons/Feather'
 import AddTask from './src/screens/AddTask';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
-
-  const inputRef = useRef()
 
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
@@ -21,6 +20,18 @@ export default function App() {
   const [taskId, setTaskId] = useState('')
 
   const [data, setData] = useState([])
+
+  useEffect(() => {
+    function loadUser(){
+      const user = AsyncStorage.getItem('user')
+      if(user != null){
+        const jsonUser = JSON.parse(user)
+        setUser(jsonUser)
+      }
+    }
+    
+    loadUser()
+  }, [user])
 
   useEffect(() => {
     function getUser(){
